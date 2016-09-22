@@ -1,0 +1,15 @@
+def test0() :
+	int a
+	bool b
+	int[] d
+	def int test2(int a,u,c):
+		puti(7/2)
+		a:=a
+		
+	end
+	def int test3(int a,c):
+		test2(1+1,5/2,d[0])
+	end
+	a:=a
+	%a:=b
+end

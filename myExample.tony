@@ -1,0 +1,35 @@
+def f ():
+	int x,y
+	bool z
+	def g ():
+	puti(5+5*5)
+	end
+	
+	def h ():
+	puti(100/5)
+	g()
+	end
+	z:=true or false
+	x:=1
+	x:=x+1
+	%y:=x-2
+	%puti(x)
+	%puti(y)
+	%if (x<y+5):
+	if 4>5 :
+		puti(1)
+	else :
+		if 11>12:
+			puti(3)
+		elsif 8>9 :
+			puti(4)
+		elsif z :
+			puti(89)
+		
+		end
+		puti(2)
+		for x := 0; x < 5; x := x+1:
+			puti(x)
+		end
+	end
+end

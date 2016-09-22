@@ -1,7 +1,7 @@
-//ΞΞΏΟ„ΟΟΞ½Ξ·Ο‚ Ξ”Ξ·ΞΌΞ®Ο„ΟΞΉΞΏΟ‚(Dimitrios Kotronis)	3120077
-//Ξ Ξ¬ΟƒΟ‡ΞΏΟ‚ Ξ“ΞµΟΟΞ³ΞΉΞΏΟ‚(Georgios Paschos) 		3120146
-//Ξ΅ΞΏΟ…ΟƒΞΉΞ¬ ΞΟ‰Ξ½ΟƒΟ„Ξ±Ξ½Ο„Ξ―Ξ½Ξ±(Rousia Konstantina)	3120159
-//Ξ¤ΟƒΞΉΞ½Ο„ΞΉΟΞ®Ο‚ ΞΞΉΞΊΟΞ»Ξ±ΞΏΟ‚(Nikolaos Tsintiris)	3120194
+//Κοτρώνης Δημήτριος(Dimitrios Kotronis)	3120077
+//Πάσχος Γεώργιος(Georgios Paschos) 		3120146
+//Ρουσιά Κωνσταντίνα(Rousia Konstantina)	3120159
+//Τσιντιρής Νικόλαος(Nikolaos Tsintiris)	3120194
 
 Package tony;
 
@@ -16,7 +16,6 @@ Helpers
 	double_quote =34;
 	all = [0..127]; 
 	eol = lf | cr | cr lf ;
-	//allall = all+eol;
 	not_eol = [all - [cr + lf]];
 	underscore = '_';
 	engquest = '?';
@@ -39,72 +38,61 @@ States
 	normal,comment;	
 	
 Tokens
+	allch='<*'all*'*>';
+	string = '"'(not_eol_with_out_dq|d_q)* '"';
+	int = 'int';
+	bool = 'bool';
+	char = 'char';
+	def = 'def';
+	and = 'and';
+	else = 'else';
+	elsif = 'elsif';
+	end = 'end';
+	exit = 'exit';
+	false = 'false';
+	for = 'for';
+	head = 'head';
+	if = 'if';
+	list = 'list';
+	mod = 'mod';
+	new = 'new';
+	nil = 'nil';
+	nil_question_mark = 'nil?';
+	not = 'not';
+	or = 'or';
+	ref = 'ref';
+	return = 'return';
+	skip = 'skip';
+	tail = 'tail';
+	true = 'true';
+	decl = 'decl';
+	mul = '*';
+	div= '/';
+	sharp='#';
+	smaller_equal='<=';
+	bigger_equal='>=';
+	equal='=';
+	not_equal='<>';
+	smaller='<';
+	bigger='>';
+	l_par = '(';
+	r_par = ')';
+	l_br = '[';
+	r_br = ']';
+	comma=',';
+	semicolon=';';
+	colon = col;
+	assign=':=';
+	blank = (' ' | eol |tab);
+	line_comment = '%' not_eol* eol; 
+	plus = '+';
+	minus='-';
+	const_char = quote (letter | digit | esc_char | ascii_char) quote;
+	const_int= digit+;
+	id = letter (letter | digit | underscore | engquest)*;
 
-	{normal->comment, comment} comment = '<''*';
-	{comment} comment_end = '*>';
-	{comment} comment_body = ([all  - ['*' + '>']]|eol)*;
-	{comment} star = '*';
-	{comment} greater = '>';
-
-	{normal}string = '"'(not_eol_with_out_dq|d_q)* '"';
-	{normal}int = 'int';
-	{normal}bool = 'bool';
-	{normal}char = 'char';
-	{normal}def = 'def';
-	{normal}and = 'and';
-	{normal}else = 'else';
-	{normal}elsif = 'elsif';
-	{normal}end = 'end';
-	{normal}exit = 'exit';
-	{normal}false = 'false';
-	{normal}for = 'for';
-	{normal}head = 'head';
-	{normal}if = 'if';
-	{normal}list = 'list';
-	{normal}mod = 'mod';
-	{normal}new = 'new';
-	{normal}nil = 'nil';
-	{normal}nil_question_mark = 'nil?';
-	{normal}not = 'not';
-	{normal}or = 'or';
-	{normal}ref = 'ref';
-	{normal}return = 'return';
-	{normal}skip = 'skip';
-	{normal}tail = 'tail';
-	{normal}true = 'true';
-	{normal}decl = 'decl';
-	
-	{normal}div= '/';
-	{normal}sharp='#';
-	{normal}smaller_equal='<=';
-	{normal}bigger_equal='>=';
-	{normal}equal='=';
-
-	{normal}l_par = '(';
-	{normal}r_par = ')';
-	{normal}l_br = '[';
-	{normal}r_br = ']';
-	{normal}comma=',';
-	{normal}semicolon=';';
-	{normal}colon = col;
-	{normal}assign=':=';
-	{normal}blank = (' ' | eol |tab);
-	{normal}line_comment = '%' not_eol* eol; 
-	{normal}plus = '+';
-	{normal}minus='-';
-	{normal}const_char = quote (letter | digit | esc_char | ascii_char) quote;
-	{normal}const_int= digit+;
-	{normal}id = letter (letter | digit | underscore | engquest)*;
-	
-	
-	
-	{normal}mul = '*';
-	{normal}not_equal='<>';
-	{normal}smaller='<';
-	{normal}bigger='>';
-	
 Ignored Tokens
-	blank ,line_comment,comment,comment_end,comment_body;
+	blank,allch ,line_comment;
 
 Productions
 
@@ -139,14 +127,15 @@ Productions
 			{bool} bool{-> New type.bool()}|
 			{char} char{-> New type.char()}|
 			{array_type} type l_br r_br{-> New type.array_type(type)}|
-			{list} list l_br type r_br{-> New type.list(type)};
+			{list} list l_br type r_br{-> New type.list(list,type)};
 	
 	statement = {simple} simple{->New statement.simple(simple)}|
 				{exit}exit{->New statement.exit()}|
 				{return} return expression{->New statement.return(expression)}|
 				{if} if expression colon statement+ elseif_block* else_block? end{->New statement.if(expression,[statement],[elseif_block.statement],else_block.statement)}|//$
-				{for} for [l]:simple_list [seml]:semicolon expression [semr]:semicolon [r]:simple_list colon statement+ end{->New statement.for(l,expression,r,[statement])};//$
+				{for} for for_simplelist expression semicolon simple_list colon statement+ end{->New statement.for(for_simplelist.simple,expression,simple_list.simple,[statement])};//$
 				
+	for_simplelist{->simple}={simple_list} simple_list semicolon{->simple_list.simple};
 	
 	elseif_block{->statement} = {elseif_bloc} elsif expression colon statement+{-> New statement.elseif(expression,[statement])};
 	
@@ -157,11 +146,11 @@ Productions
 			{scall} call{->New simple.scall(call)};
 						
 
-	simple_list = {single_simple} simple {->New simple_list.single_simple(simple)}|//$
-					{multi_simple} simple comma simple_list{->New simple_list.multi_simple (simple,simple_list)};
+	simple_list{->simple} = {single_simple} simple {->simple.simple }|//$
+					{multi_simple} comma simple_list{->simple_list.simple};
 	
 	
-	call = {call} id l_par real_par_list? r_par{->New call.call(id,[real_par_list])};
+	call = {call} id l_par real_par_list? r_par{->New call.call(id,real_par_list)};
 	
 	real_par_list= {sigle_real_par} expression {-> New real_par_list.sigle_real_par(expression)}|
 					{multi_real_par} expression comma real_par_list{-> New real_par_list.multi_real_par(expression,real_par_list)};
@@ -252,13 +241,13 @@ Abstract Syntax Tree
 			{bool}|
 			{char} |
 			{array_type} type|
-			{list} type;
+			{list} list type;
 			
 	statement = {simple} simple|
 				{exit}|
 				{return} expression|
 				{if}  expression  [ifstate]:statement* [elseif]:statement* [else]:statement|
-				{for} [l]:simple_list expression  [r]:simple_list  statement* |
+				{for} [list]:simple expression  [list2]:simple  statement* |
 				{elseif} expression statement*|
 				{else} statement*;
 				
@@ -267,13 +256,11 @@ Abstract Syntax Tree
 			{atomass} atom expression|
 			{scall} call
 				;
-	
-	simple_list = {single_simple} simple |
-					{multi_simple} simple simple_list;	
+				
 				
 			
 				
-	call = {call} id real_par_list* ;
+	call = {call} id real_par_list ;
 	
 	real_par_list= {sigle_real_par} expression |
 					{multi_real_par} expression real_par_list;

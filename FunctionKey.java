@@ -11,30 +11,26 @@ import java.util.Objects;
 public class FunctionKey
 {
 	String id;
-	LinkedList<String> parametersType;
-	String type;
+	LinkedList<Type> parametersType;
+	Type type;
 	
 	public FunctionKey(String id) {
 		this.id=id;
-		parametersType= new LinkedList<String>();
-		this.type="";
+		parametersType= new LinkedList<Type>();
+		this.type=Type.VoidType();
 			
 	}
 	
-	public FunctionKey() {
-		this("");
-			
-	}
-	public FunctionKey(String id , String rType) {
+	public FunctionKey(String id , Type rType) {
 		this(id);
 		this.type=rType;
 			
 	}
 	
-	public FunctionKey(String id2, List<String> par) {
+	public FunctionKey(String id2, List<Type> par) {
 		this.id=id;
-		parametersType= new LinkedList<String>(par);
-		this.type="";
+		parametersType= new LinkedList<Type>(par);
+		this.type=Type.VoidType();
 	}
 
 	public void setId(String id)
@@ -42,12 +38,12 @@ public class FunctionKey
 		this.id=id;
 	}
 	
-	public void setType(String type)
+	public void setType(Type type)
 	{
 		this.type=type;
 	}
 	
-	public void addParameterType(String type)
+	public void addParameterType(Type type)
 	{
 		parametersType.add(type);
 	}
@@ -74,6 +70,25 @@ public class FunctionKey
 		//return id.hashCode()+parametersType.hashCode();
 	}
 	
+	public String getFormalsString()
+	{
+		String a="";
+		for (Type type : parametersType) {
+			if(type.isInt())
+				a+="I";
+		}
+		
+		return a;
+	}
+	
+	public String getReturnTypeString()
+	{
+		if(type.isInt())
+			return "I";
+		else //(type.isVoid())
+			return"V";
+		
+	}
 	
 	
 	

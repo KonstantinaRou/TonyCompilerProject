@@ -1,7 +1,7 @@
-//ÎšÎ¿Ï„ÏÏŽÎ½Î·Ï‚ Î”Î·Î¼Î®Ï„ÏÎ¹Î¿Ï‚(Dimitrios Kotronis)	3120077
-//Î Î¬ÏƒÏ‡Î¿Ï‚ Î“ÎµÏŽÏÎ³Î¹Î¿Ï‚(Georgios Paschos) 		3120146
-//Î¡Î¿Ï…ÏƒÎ¹Î¬ ÎšÏ‰Î½ÏƒÏ„Î±Î½Ï„Î¯Î½Î±(Rousia Konstantina)	3120159
-//Î¤ÏƒÎ¹Î½Ï„Î¹ÏÎ®Ï‚ ÎÎ¹ÎºÏŒÎ»Î±Î¿Ï‚(Nikolaos Tsintiris)	3120194
+//Êïôñþíçò ÄçìÞôñéïò(Dimitrios Kotronis)	3120077
+//ÐÜó÷ïò Ãåþñãéïò(Georgios Paschos) 		3120146
+//ÑïõóéÜ Êùíóôáíôßíá(Rousia Konstantina)	3120159
+//ÔóéíôéñÞò Íéêüëáïò(Nikolaos Tsintiris)	3120194
 
 Package tony;
 
@@ -145,8 +145,9 @@ Productions
 				{exit}exit{->New statement.exit()}|
 				{return} return expression{->New statement.return(expression)}|
 				{if} if expression colon statement+ elseif_block* else_block? end{->New statement.if(expression,[statement],[elseif_block.statement],else_block.statement)}|//$
-				{for} for [l]:simple_list [seml]:semicolon expression [semr]:semicolon [r]:simple_list colon statement+ end{->New statement.for(l,expression,r,[statement])};//$
+				{for} for for_simplelist  expression semicolon simple_list colon statement+ end{->New statement.for([for_simplelist.simple],expression,simple_list.simple,[statement])};//$
 				
+	for_simplelist{->simple}={simple_list} simple_list semicolon{->simple_list.simple};
 	
 	elseif_block{->statement} = {elseif_bloc} elsif expression colon statement+{-> New statement.elseif(expression,[statement])};
 	
@@ -157,8 +158,8 @@ Productions
 			{scall} call{->New simple.scall(call)};
 						
 
-	simple_list = {single_simple} simple {->New simple_list.single_simple(simple)}|//$
-					{multi_simple} simple comma simple_list{->New simple_list.multi_simple (simple,simple_list)};
+	simple_list{->simple} = {single_simple} simple {->simple.simple }|//$
+					{multi_simple} comma simple_list{->simple_list.simple};
 	
 	
 	call = {call} id l_par real_par_list? r_par{->New call.call(id,[real_par_list])};
@@ -258,7 +259,7 @@ Abstract Syntax Tree
 				{exit}|
 				{return} expression|
 				{if}  expression  [ifstate]:statement* [elseif]:statement* [else]:statement|
-				{for} [l]:simple_list expression  [r]:simple_list  statement* |
+				{for} [list]:simple* expression  [list2]:simple  statement* |
 				{elseif} expression statement*|
 				{else} statement*;
 				
@@ -267,9 +268,7 @@ Abstract Syntax Tree
 			{atomass} atom expression|
 			{scall} call
 				;
-	
-	simple_list = {single_simple} simple |
-					{multi_simple} simple simple_list;	
+				
 				
 			
 				

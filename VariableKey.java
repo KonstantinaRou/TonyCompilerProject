@@ -10,7 +10,8 @@ import java.util.Objects;
 
 public class VariableKey
 {
-	String id,type;
+	String id;
+	Type type;
 	
 	public VariableKey(String id) {
 		this.id=id;
@@ -19,7 +20,7 @@ public class VariableKey
 	
 	
 	
-	public VariableKey(String id, String type) {
+	public VariableKey(String id, Type type) {
 		this.id=id;
 		this.type= type;
 	}

@@ -1,0 +1,17 @@
+def test() :
+	%int a,b,c
+	def test2():
+		def test1():
+			skip
+		end
+		a := 5+3*2
+	end
+	
+	def test3():
+		def test9():
+			a := 5
+		end
+		a := 5+3*2
+	end
+	a := 5+3*2
+end
