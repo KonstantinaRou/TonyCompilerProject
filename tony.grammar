@@ -1,0 +1,202 @@
+//Κοτρώνης Δημήτριος(Dimitrios Kotronis)	3120077
+//Πάσχος Γεώργιος(Georgios Paschos) 		3120146
+//Ρουσιά Κωνσταντίνα(Rousia Konstantina)	3120159
+//Τσιντιρής Νικόλαος(Nikolaos Tsintiris)	3120194
+
+Package tony;
+
+Helpers
+	digit = ['0' .. '9'];
+	letter = ['a' .. 'z']|['A' .. 'Z']; 
+	cr = 13; 
+	lf = 10;
+	tab = 9;
+	sign= '+' | '-';
+	quote = 39;
+	double_quote =34;
+	all = [0..127]; 
+	eol = lf | cr | cr lf ;
+	not_eol = [all - [cr + lf]];
+	underscore = '_';
+	engquest = '?';
+	star='*';
+	n='\n';
+	t='\t';
+	z='\0';
+	r='\r';
+	b='\\';
+	q='\' ''';
+	d_q='\"';
+	backstar = quote tab;
+	hex_digit = [digit + [['a' .. 'f'] + ['A' .. 'F']]];
+	ascii_char='\x' hex_digit? hex_digit;
+	col = 58;
+	esc_char=(n|t|z|r|b|q|d_q);
+	not_eol_with_out_dq=[not_eol - double_quote];
+	
+States
+	normal,comment;	
+	
+Tokens
+	allch='<*'all*'*>';
+	string = '"'(not_eol_with_out_dq|d_q)* '"';
+	int = 'int';
+	bool = 'bool';
+	char = 'char';
+	def = 'def';
+	and = 'and';
+	else = 'else';
+	elsif = 'elsif';
+	end = 'end';
+	exit = 'exit';
+	false = 'false';
+	for = 'for';
+	head = 'head';
+	if = 'if';
+	list = 'list';
+	mod = 'mod';
+	new = 'new';
+	nil = 'nil';
+	nil_question_mark = 'nil?';
+	not = 'not';
+	or = 'or';
+	ref = 'ref';
+	return = 'return';
+	skip = 'skip';
+	tail = 'tail';
+	true = 'true';
+	decl = 'decl';
+	mul = '*';
+	div= '/';
+	sharp='#';
+	smaller_equal='<=';
+	bigger_equal='>=';
+	equal='=';
+	not_equal='<>';
+	smaller='<';
+	bigger='>';
+	l_par = '(';
+	r_par = ')';
+	l_br = '[';
+	r_br = ']';
+	comma=',';
+	semicolon=';';
+	colon = col;
+	assign=':=';
+	blank = (' ' | lf | cr |tab);
+	line_comment = '%' not_eol* eol; 
+	plus = '+';
+	minus='-';
+	const_char = quote (letter | digit | esc_char | ascii_char) quote;
+	const_int= digit+;
+	id = letter (letter | digit | underscore | engquest)*;
+
+Ignored Tokens
+	blank,allch ,line_comment;
+
+Productions
+
+	program = function_definition;
+	
+	function_definition = def header colon function* statement+ end;
+	
+	function = 	{function_def} function_definition |
+				{function_decl} decl header|
+				{var_definition} var_definition;
+	
+	var_definition = {var_definition} type id more_var_id*;
+	
+	more_var_id = {more_var_id} comma id;
+	
+	header = {header} type?  id l_par parameters? r_par;
+	
+	parameters = {parameters} formal more_formal_header*;
+	
+	more_formal_header = {more_formal_header} semicolon formal;
+	
+	formal = {formal} ref? type id more_var_id*;
+	
+	type =	{int} int | {bool} bool| {char} char|
+			{array_type} type l_br r_br| {list} list l_br type r_br;
+	
+	statement = {simple} simple|
+				{exit}exit|
+				{return} return expression|
+				{if} if expression colon statement+ elseif_block* else_block? end|
+				{for} for for_simplelist expression semicolon simple_list colon statement+ end;
+				
+	for_simplelist={simple_list} simple_list semicolon;
+	
+	elseif_block = {elseif_bloc} elsif expression colon statement+;
+	
+	else_block = {else_block} else colon statement+;
+	
+	simple= {skip}skip|
+			{atomass} atom assign expression|
+			{scall} call;
+						
+
+	simple_list = {simple_list} simple more_simple*;
+	
+	more_simple = {more_simple} comma simple;
+	
+	call = {call} id l_par real_par? r_par;
+	
+	real_par ={real_par} expression more_expression*;
+	
+	more_expression = {more_expression} comma expression;
+	
+	atom =	{atom} id|
+			{string_literal} string |
+			{ind_access} atom l_br expression r_br | {acall}call;
+		
+
+	expression =	{new} new type l_br expression r_br|
+					{nil} nil|
+					{head} head l_par expression r_par|
+					{tail} tail l_par expression r_par|
+					{orexpr}orexpr;		
+					
+	orexpr =	{or} orexpr or andexpr|
+				{and}andexpr;		
+				
+	andexpr =	{not} notexpr|
+				{and} andexpr and notexpr;
+	
+	notexpr =	{logexpr} logexpr |
+				{not} not notexpr;
+	
+	logexpr =	{list} listexpr|
+				{eq} logexpr equal listexpr|
+				{not_equal} logexpr not_equal listexpr|
+				{smaller} logexpr smaller listexpr|
+				{bigger} logexpr bigger listexpr|
+				{smaller_eq} logexpr smaller_equal listexpr|
+				{bigger_eq} logexpr bigger_equal listexpr|
+				{nilq} nil_question_mark l_par expression r_par |
+				{true} true|
+				{false} false
+				;
+				
+	listexpr =	{add} addexp|
+			{list} addexp sharp listexpr
+			;
+					
+	addexp	=	{mul} multiplicationexp |
+			{addition} addexp plus multiplicationexp|
+			{subtraction} addexp minus multiplicationexp;
+	
+	multiplicationexp = {exp} signnumber|
+						{multiplication} multiplicationexp mul  signnumber|
+						{division} multiplicationexp div signnumber|	
+						{modulo} multiplicationexp mod signnumber;	
+	
+	signnumber = 	{var} variable|
+					{num} sign_char variable|
+					{pr}l_par expression r_par;
+	variable =	{atom} atom |
+				{int_const}  const_int|
+				{char_const} const_char
+				;
+				
+	sign_char = {plus} plus | {minus} minus;
